@@ -1,0 +1,10 @@
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\bin\Debug\TemplateStaticAnalyser.exe
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\bin\Debug\TemplateStaticAnalyser.pdb
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.csprojResolveAssemblyReference.cache
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.Form1.resources
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.Properties.Resources.resources
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.csproj.GenerateResource.Cache
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.exe
+c:\users\paul.houlston\documents\visual studio 2013\Projects\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.pdb
+C:\repos\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.exe
+C:\repos\TemplateStaticAnalyser\TemplateStaticAnalyser\obj\Debug\TemplateStaticAnalyser.pdb
