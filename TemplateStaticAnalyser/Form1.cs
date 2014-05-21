@@ -46,7 +46,7 @@ namespace TemplateStaticAnalyser
             }
             catch (Exception ex)
             {
-                throw; //tbd...
+                MessageBox.Show("An exception occurred\r\n" + ex.Message, "Something went wrong", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -150,8 +150,8 @@ namespace TemplateStaticAnalyser
             return
                 new SqlAuthConnectionModel
                 {
-                    UserName = UserNameTextBox.Text,
-                    Password = PasswordTextBox.Text,
+                    UserName = "IRISLaw",
+                    Password = "1r15l4w09!",
                     ServerName = DatabaseServerComboBox.Text
                 };
         }
