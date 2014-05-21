@@ -89,13 +89,24 @@ namespace TemplateStaticAnalyser
             get { return new[] { "master", "tempdb", "model", "msdb" }; }
         }
 
-        public String ConnectionString(SqlAuthConnectionModel connectionModel)
+        private String ConnectionString(SqlAuthConnectionModel connectionModel)
         {
             return new SqlConnectionStringBuilder
             {
                 UserID = connectionModel.UserName,
                 DataSource = connectionModel.ServerName,
                 Password = connectionModel.Password
+            }.ConnectionString;
+        }
+
+        public String ConnectionString(SqlAuthConnectionModel connectionModel, string databaseName)
+        {
+            return new SqlConnectionStringBuilder
+            {
+                UserID = connectionModel.UserName,
+                DataSource = connectionModel.ServerName,
+                Password = connectionModel.Password,
+                InitialCatalog = databaseName
             }.ConnectionString;
         }
     }

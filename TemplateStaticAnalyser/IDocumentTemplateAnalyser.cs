@@ -4,9 +4,10 @@ using TemplateStaticAnalyser.Models;
 
 namespace TemplateStaticAnalyser
 {
-    public interface IAnalyser
+    public interface IDocumentTemplateAnalyser
     {
         event EventHandler<TemplateParsedEventArgs> OnTemplateParsed;
-        Dictionary<TemplateModel, List<FieldCodeSummaryModel>> Analyse(string connectionString);
+
+        Dictionary<TemplateModel, List<FieldCodeSummaryModel>> ProcessDocumentTemplates(string connectionString);
     }
 }

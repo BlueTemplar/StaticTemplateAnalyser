@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,18 +47,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analyser.cs" />
     <Compile Include="AnalysisDataParser.cs" />
     <Compile Include="DatabaseHelper.cs" />
+    <Compile Include="DocumentTemplateAnalyser.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="IAnalyser.cs" />
     <Compile Include="IAnalysisDataParser.cs" />
     <Compile Include="IDatabaseHelper.cs" />
+    <Compile Include="IDocumentTemplateAnalyser.cs" />
+    <Compile Include="Models\FieldCodeSearchModel.cs" />
     <Compile Include="Models\FieldCodeSummaryModel.cs" />
     <Compile Include="Models\SqlAuthConnectionModel.cs" />
     <Compile Include="Models\SqlServerInstance.cs" />

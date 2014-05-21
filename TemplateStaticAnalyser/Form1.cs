@@ -10,15 +10,15 @@ namespace TemplateStaticAnalyser
     public partial class Form1 : Form
     {
         private readonly IDatabaseHelper _dbHelper;
-        private readonly IAnalyser _analyser;
+        private readonly IDocumentTemplateAnalyser _analyser;
         private readonly IAnalysisDataParser _analysisDataParser;
 
         public Form1()
-            : this(new DatabaseHelper(), new Analyser(), new AnalysisDataParser())
+            : this(new DatabaseHelper(), new DocumentTemplateAnalyser(), new AnalysisDataParser())
         {
         }
 
-        public Form1(IDatabaseHelper databaseHelper, IAnalyser analyser, IAnalysisDataParser analysisDataParser)
+        public Form1(IDatabaseHelper databaseHelper, IDocumentTemplateAnalyser analyser, IAnalysisDataParser analysisDataParser)
         {
             _dbHelper = databaseHelper;
             _analyser = analyser;
@@ -95,9 +95,9 @@ namespace TemplateStaticAnalyser
             AnalyseButton.Enabled = false;
             ProgressBar.Visible = true;
 
-            var connectionString = _dbHelper.ConnectionString(SqlCredentials());
+            var connectionString = _dbHelper.ConnectionString(SqlCredentials(), DatabaseNameComboBox.Text);
             _analyser.OnTemplateParsed += UpdateProgress;
-            var analysisedData = _analyser.Analyse(connectionString);
+            var analysisedData = _analyser.ProcessDocumentTemplates(connectionString);
             _analyser.OnTemplateParsed -= UpdateProgress;
             return analysisedData;
         }

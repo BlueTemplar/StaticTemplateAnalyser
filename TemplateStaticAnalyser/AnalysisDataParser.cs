@@ -21,7 +21,7 @@ namespace TemplateStaticAnalyser
         {
             foreach (var item in analysisData)
             {
-                sb.Append(item.Key.Name);
+                sb.AppendFormat("\"{0}\"", item.Key.Name.Replace("\"", "\"\""));
                 foreach (var fieldCode in distinctFieldCodes)
                 {
                     var matchedFieldCode = item.Value.SingleOrDefault(v => v.FieldCode == fieldCode);
