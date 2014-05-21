@@ -59,13 +59,15 @@ namespace TemplateStaticAnalyser
 
                     if (reader.HasRows)
                     {
+                        var index = 1;
                         var threads = new List<Thread>();
                         while (reader.Read())
                         {
                             var templateName = reader.GetString(4);
                             var docContent = (byte[])reader["DocContent"];
 
-                            threads.Add(new Thread(() => ParseTemplate(analysisData, wordApplication, noOfTemplates, templateName, docContent)));
+                            threads.Add(new Thread(() => ParseTemplate(analysisData, wordApplication, noOfTemplates, templateName, docContent, ref index)));
+                            //ParseTemplate(analysisData, wordApplication, noOfTemplates, templateName, docContent, ref index);
                         }
 
                         const int threadCount = 8;
@@ -99,7 +101,7 @@ namespace TemplateStaticAnalyser
             }
         }
 
-        private void ParseTemplate(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData, Application wordApplication, int noOfTemplates, string templateName, byte[] docContent)
+        private void ParseTemplate(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData, Application wordApplication, int noOfTemplates, string templateName, byte[] docContent, ref int index)
         {
             analysisData.Add(
                 new TemplateModel {Name = templateName},
@@ -107,22 +109,20 @@ namespace TemplateStaticAnalyser
 
             if (OnTemplateParsed != null)
             {
-                OnTemplateParsed(this, new TemplateParsedEventArgs(noOfTemplates));
+                OnTemplateParsed(this, new TemplateParsedEventArgs(index++, noOfTemplates));
             }
         }
 
         private static SqlDataReader GetData(SqlConnection sqlConnection)
         {
-            var sqlCommand = new SqlCommand("SELECT top 100 * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL",
-                sqlConnection);
+            var sqlCommand = new SqlCommand("SELECT * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx'", sqlConnection);
 
-            var reader = sqlCommand.ExecuteReader();
-            return reader;
+            return sqlCommand.ExecuteReader();
         }
 
         private int GetNoOfTemplates(SqlConnection sqlConnection)
         {
-            var sqlCommand2 = new SqlCommand("SELECT COUNT(*) FROM dbo.Docs WHERE [TemplateId] IS NOT NULL", sqlConnection);
+            var sqlCommand2 = new SqlCommand("SELECT COUNT(*) FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx'", sqlConnection);
             return (int)sqlCommand2.ExecuteScalar();
         }
 
@@ -170,7 +170,7 @@ namespace TemplateStaticAnalyser
         private static void ParseFieldCode(Document document, FieldCodeSearchModel code,
             ICollection<FieldCodeSummaryModel> analysisData)
         {
-            var matches = Regex.Matches(document.Range().Text, code.FieldCode);
+            var matches = Regex.Matches(document.Range().Text, code.FieldCode, RegexOptions.IgnoreCase);
 
             analysisData.Add(
                 new FieldCodeSummaryModel

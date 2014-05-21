@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -43,8 +44,8 @@ namespace TemplateStaticAnalyser
 
                 var analysisData = StartAnalysis();
 
-                SaveCsv(analysisData);
-                AnalysisFinished();
+                //SaveCsv(analysisData);
+                //AnalysisFinished();
             }
             catch (Exception ex)
             {
@@ -89,7 +90,7 @@ namespace TemplateStaticAnalyser
             AnalyseButton.Enabled = true;
             ProgressBar.Visible = false;
 
-            
+
         }
 
         private Dictionary<TemplateModel, List<FieldCodeSummaryModel>> StartAnalysis()
@@ -100,18 +101,36 @@ namespace TemplateStaticAnalyser
             var connectionString = _dbHelper.ConnectionString(SqlCredentials(), DatabaseNameComboBox.Text);
             ProgressBar.Value = 0;
             _analyser.OnTemplateParsed += UpdateProgress;
-            var analysisedData = _analyser.ProcessDocumentTemplates(connectionString);
-            _analyser.OnTemplateParsed -= UpdateProgress;
+
+
+            Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisedData = null;
+            this.BackgroundWorker.WorkerReportsProgress = true;
+
+            this.BackgroundWorker.DoWork += delegate(object o, DoWorkEventArgs args)
+            {
+                analysisedData = _analyser.ProcessDocumentTemplates(connectionString);
+            };
+
+            this.BackgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs args) { SaveCsv(analysisedData); };
+            this.BackgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs args)
+            {
+                this.ProgressBar.Value = args.ProgressPercentage;
+            };
+            this.BackgroundWorker.RunWorkerAsync();
+
+
+            //_analyser.OnTemplateParsed -= UpdateProgress;
             return analysisedData;
         }
 
         private void UpdateProgress(object sender, TemplateParsedEventArgs args)
         {
-            BeginInvoke((Action) (() =>
-            {
-                ProgressBar.Maximum = args.TemplateCount;
-                ProgressBar.Value++;
-            }));
+            this.BackgroundWorker.ReportProgress(100 * args.TemplateIndex / args.TemplateCount);
+            //BeginInvoke((Action)(() =>
+            //{
+            //    ProgressBar.Maximum = args.TemplateCount;
+            //    ProgressBar.Value++;
+            //}));
         }
 
 
