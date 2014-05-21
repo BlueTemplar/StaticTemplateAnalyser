@@ -2,12 +2,12 @@ namespace TemplateStaticAnalyser.Models
 {
     public class FieldCodeSearchModel
     {
-        public FieldCodeSearchModel(string fieldCode, string friendlyName)
+        public FieldCodeSearchModel(string regex, string friendlyName)
         {
-            FieldCode = fieldCode;
+            Regex = regex;
             FriendlyName = friendlyName;
         }
-        public string FieldCode { get; private set; }
+        public string Regex { get; private set; }
         public string FriendlyName { get; private set; }
     }
 }

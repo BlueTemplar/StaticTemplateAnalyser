@@ -189,6 +189,11 @@
             this.label2.Size = new System.Drawing.Size(519, 1);
             this.label2.TabIndex = 17;
             // 
+            // BackgroundWorker
+            // 
+            this.BackgroundWorker.WorkerReportsProgress = true;
+            this.BackgroundWorker.WorkerSupportsCancellation = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

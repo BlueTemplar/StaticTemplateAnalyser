@@ -24,8 +24,8 @@ namespace TemplateStaticAnalyser
                 sb.AppendFormat("\"{0}\"", item.Key.Name.Replace("\"", "\"\""));
                 foreach (var fieldCode in distinctFieldCodes)
                 {
-                    var matchedFieldCode = item.Value.SingleOrDefault(v => v.FieldCode == fieldCode);
-                    sb.AppendFormat(",{0}", matchedFieldCode == null ? 0 : matchedFieldCode.Instances);
+                    var matchedFieldCode = item.Value.SingleOrDefault(v => v.ColumnName == fieldCode);
+                    sb.AppendFormat(",{0}", matchedFieldCode == null ? 0 : matchedFieldCode.Value);
                 }
                 NewLine(sb);
             }
@@ -49,9 +49,9 @@ namespace TemplateStaticAnalyser
         private string[] GetDistinctFieldCodes(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData)
         {
             var distinctFieldCodes = new List<string>();
-            foreach (var fieldCodeSummary in analysisData.SelectMany(i => i.Value.Where(fc => !distinctFieldCodes.Contains(fc.FieldCode))))
+            foreach (var fieldCodeSummary in analysisData.SelectMany(i => i.Value.Where(fc => !distinctFieldCodes.Contains(fc.ColumnName))))
             {
-                distinctFieldCodes.Add(fieldCodeSummary.FieldCode);
+                distinctFieldCodes.Add(fieldCodeSummary.ColumnName);
             }
             return distinctFieldCodes.OrderBy(fc => fc).ToArray();
         }

@@ -2,7 +2,7 @@ namespace TemplateStaticAnalyser.Models
 {
     public class FieldCodeSummaryModel
     {
-        public string FieldCode { get; set; }
-        public int Instances { get; set; }
+        public string ColumnName { get; set; }
+        public int Value { get; set; }
     }
 }

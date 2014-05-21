@@ -30,7 +30,12 @@ namespace TemplateStaticAnalyser
             new FieldCodeSearchModel("<DR", "Document Reference (DR)"),
             new FieldCodeSearchModel("<HD", "Stationery Template (HD)"),
             new FieldCodeSearchModel("<HQ", "Stationery Template (HQ)"),
-            new FieldCodeSearchModel("<PH", "Imported Paragraph (PH)")
+            new FieldCodeSearchModel("<PH", "Imported Paragraph (PH)"),
+            new FieldCodeSearchModel("<DL>", "Delete Line (DL)"),
+            new FieldCodeSearchModel("(<format>){1}([A-Z]+[,]{1})*(DeleteWord){1}([,]{1}[A-Z]+)*(</format>){1}", "Delete Word"),
+            new FieldCodeSearchModel("(<format>){1}([A-Z]+[,]{1})*(delt){1}([,]{1}[A-Z]+)*(</format>){1}", "Delete Table Row (delt)"),
+            new FieldCodeSearchModel("(<format>){1}([A-Z]+[,]{1})*(AddAnd){1}([,]{1}[A-Z]+)*(</format>){1}", "Add And"),
+            new FieldCodeSearchModel("(<format>){1}([A-Z]+[,]{1})*(AddOf){1}([,]{1}[A-Z]+)*(</format>){1}", "Add Of"),
         };
 
         private Application Initialise()
@@ -67,7 +72,6 @@ namespace TemplateStaticAnalyser
                             var docContent = (byte[])reader["DocContent"];
 
                             threads.Add(new Thread(() => ParseTemplate(analysisData, wordApplication, noOfTemplates, templateName, docContent, ref index)));
-                            //ParseTemplate(analysisData, wordApplication, noOfTemplates, templateName, docContent, ref index);
                         }
 
                         const int threadCount = 8;
@@ -113,16 +117,15 @@ namespace TemplateStaticAnalyser
             }
         }
 
-        private static SqlDataReader GetData(SqlConnection sqlConnection)
+        private SqlDataReader GetData(SqlConnection sqlConnection)
         {
-            var sqlCommand = new SqlCommand("SELECT * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx'", sqlConnection);
-
+            var sqlCommand = new SqlCommand("SELECT * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx' AND DocId = 804", sqlConnection);
             return sqlCommand.ExecuteReader();
         }
 
         private int GetNoOfTemplates(SqlConnection sqlConnection)
         {
-            var sqlCommand2 = new SqlCommand("SELECT COUNT(*) FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx'", sqlConnection);
+            var sqlCommand2 = new SqlCommand("SELECT COUNT(*) FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx' AND DocId = 804", sqlConnection);
             return (int)sqlCommand2.ExecuteScalar();
         }
 
@@ -167,16 +170,18 @@ namespace TemplateStaticAnalyser
             }
         }
 
-        private static void ParseFieldCode(Document document, FieldCodeSearchModel code,
+        private void ParseFieldCode(Document document, FieldCodeSearchModel code,
             ICollection<FieldCodeSummaryModel> analysisData)
         {
-            var matches = Regex.Matches(document.Range().Text, code.FieldCode, RegexOptions.IgnoreCase);
-
+            var text = document.Range().Text;
+            Debug.WriteLine("Text is: {0}, Regex is: {1}", text, code.Regex);
+            var matches = Regex.Matches(text, code.Regex, RegexOptions.IgnoreCase);
+            
             analysisData.Add(
                 new FieldCodeSummaryModel
                 {
-                    FieldCode = code.FriendlyName,
-                    Instances = matches.Count
+                    ColumnName = code.FriendlyName,
+                    Value = matches.Count
                 });
         }
     }

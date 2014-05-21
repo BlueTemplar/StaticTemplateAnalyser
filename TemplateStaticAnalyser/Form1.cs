@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -42,10 +41,7 @@ namespace TemplateStaticAnalyser
                     return;
                 }
 
-                var analysisData = StartAnalysis();
-
-                //SaveCsv(analysisData);
-                //AnalysisFinished();
+                StartAnalysis();
             }
             catch (Exception ex)
             {
@@ -55,20 +51,38 @@ namespace TemplateStaticAnalyser
 
         private void SaveCsv(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData)
         {
-            var dlg = new SaveFileDialog
-            {
-                AddExtension = true,
-                OverwritePrompt = true,
-                FileName = "static-analysis.csv",
-                DefaultExt = "csv",
-                Filter = "CSV Files | *.csv",
-                SupportMultiDottedExtensions = false,
-                Title = "Save static analysis?"
-            };
+            var dlg = CreateSaveFileDialog();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(dlg.FileName, _analysisDataParser.ToCsv(analysisData));
+                WriteCsv(analysisData, dlg);
             }
+            ReEnableUi();
+        }
+
+        private SaveFileDialog CreateSaveFileDialog()
+        {
+            return
+                new SaveFileDialog
+                {
+                    AddExtension = true,
+                    OverwritePrompt = true,
+                    FileName = "static-analysis.csv",
+                    DefaultExt = "csv",
+                    Filter = "CSV Files | *.csv",
+                    SupportMultiDottedExtensions = false,
+                    Title = "Save static analysis?"
+                };
+        }
+
+        private void ReEnableUi()
+        {
+            AnalyseButton.Enabled = true;
+            ProgressBar.Visible = false;
+        }
+
+        private void WriteCsv(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData, SaveFileDialog dlg)
+        {
+            File.WriteAllText(dlg.FileName, _analysisDataParser.ToCsv(analysisData));
         }
 
         private void ShowInvalidCredentialsMessage()
@@ -85,52 +99,31 @@ namespace TemplateStaticAnalyser
             return !_dbHelper.ValidateLogin(SqlCredentials());
         }
 
-        private void AnalysisFinished()
+        private void StartAnalysis()
         {
-            AnalyseButton.Enabled = true;
-            ProgressBar.Visible = false;
-
-
-        }
-
-        private Dictionary<TemplateModel, List<FieldCodeSummaryModel>> StartAnalysis()
-        {
-            AnalyseButton.Enabled = false;
-            ProgressBar.Visible = true;
-
+            LockDownUi();
             var connectionString = _dbHelper.ConnectionString(SqlCredentials(), DatabaseNameComboBox.Text);
-            ProgressBar.Value = 0;
+            
             _analyser.OnTemplateParsed += UpdateProgress;
 
-
             Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisedData = null;
-            this.BackgroundWorker.WorkerReportsProgress = true;
 
-            this.BackgroundWorker.DoWork += delegate(object o, DoWorkEventArgs args)
-            {
-                analysisedData = _analyser.ProcessDocumentTemplates(connectionString);
-            };
+            BackgroundWorker.RunWorkerCompleted += (sender, args) => SaveCsv(analysisedData);
+            BackgroundWorker.DoWork += (o, args) => analysisedData = _analyser.ProcessDocumentTemplates(connectionString); 
+            BackgroundWorker.ProgressChanged += (sender, args) => ProgressBar.Value = args.ProgressPercentage;
+            BackgroundWorker.RunWorkerAsync();
+        }
 
-            this.BackgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs args) { SaveCsv(analysisedData); };
-            this.BackgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs args)
-            {
-                this.ProgressBar.Value = args.ProgressPercentage;
-            };
-            this.BackgroundWorker.RunWorkerAsync();
-
-
-            //_analyser.OnTemplateParsed -= UpdateProgress;
-            return analysisedData;
+        private void LockDownUi()
+        {
+            ProgressBar.Value = 0;
+            AnalyseButton.Enabled = false;
+            ProgressBar.Visible = true;
         }
 
         private void UpdateProgress(object sender, TemplateParsedEventArgs args)
         {
-            this.BackgroundWorker.ReportProgress(100 * args.TemplateIndex / args.TemplateCount);
-            //BeginInvoke((Action)(() =>
-            //{
-            //    ProgressBar.Maximum = args.TemplateCount;
-            //    ProgressBar.Value++;
-            //}));
+            BackgroundWorker.ReportProgress(100 * args.TemplateIndex / args.TemplateCount);
         }
 
 
