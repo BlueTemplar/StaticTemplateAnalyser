@@ -119,13 +119,13 @@ namespace TemplateStaticAnalyser
 
         private SqlDataReader GetData(SqlConnection sqlConnection)
         {
-            var sqlCommand = new SqlCommand("SELECT * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx' AND DocId = 804", sqlConnection);
+            var sqlCommand = new SqlCommand("SELECT * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx'", sqlConnection);
             return sqlCommand.ExecuteReader();
         }
 
         private int GetNoOfTemplates(SqlConnection sqlConnection)
         {
-            var sqlCommand2 = new SqlCommand("SELECT COUNT(*) FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx' AND DocId = 804", sqlConnection);
+            var sqlCommand2 = new SqlCommand("SELECT COUNT(*) FROM dbo.Docs WHERE [TemplateId] IS NOT NULL AND DocFileName NOT LIKE '%.docx'", sqlConnection);
             return (int)sqlCommand2.ExecuteScalar();
         }
 
