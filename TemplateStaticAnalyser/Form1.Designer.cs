@@ -38,21 +38,22 @@
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // AnalyseButton
             // 
             this.AnalyseButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AnalyseButton.Location = new System.Drawing.Point(422, 200);
+            this.AnalyseButton.Location = new System.Drawing.Point(425, 197);
+            this.AnalyseButton.Margin = new System.Windows.Forms.Padding(6);
             this.AnalyseButton.Name = "AnalyseButton";
-            this.AnalyseButton.Size = new System.Drawing.Size(94, 28);
+            this.AnalyseButton.Size = new System.Drawing.Size(88, 28);
             this.AnalyseButton.TabIndex = 0;
             this.AnalyseButton.Text = "Analyse";
             this.AnalyseButton.UseVisualStyleBackColor = true;
@@ -113,10 +114,10 @@
             // ProgressBar
             // 
             this.ProgressBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ProgressBar.Location = new System.Drawing.Point(6, 203);
-            this.ProgressBar.Margin = new System.Windows.Forms.Padding(6, 6, 6, 5);
+            this.ProgressBar.Location = new System.Drawing.Point(6, 202);
+            this.ProgressBar.Margin = new System.Windows.Forms.Padding(6, 11, 3, 10);
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(407, 23);
+            this.ProgressBar.Size = new System.Drawing.Size(410, 19);
             this.ProgressBar.TabIndex = 15;
             this.ProgressBar.Visible = false;
             // 
@@ -131,7 +132,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 79);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(513, 115);
+            this.panel1.Size = new System.Drawing.Size(513, 109);
             this.panel1.TabIndex = 16;
             // 
             // tableLayoutPanel1
@@ -151,18 +152,9 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 34F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(519, 231);
             this.tableLayoutPanel1.TabIndex = 17;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(173, 70);
-            this.pictureBox1.TabIndex = 11;
-            this.pictureBox1.TabStop = false;
             // 
             // panel2
             // 
@@ -175,6 +167,15 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(519, 75);
             this.panel2.TabIndex = 11;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(173, 70);
+            this.pictureBox1.TabIndex = 11;
+            this.pictureBox1.TabStop = false;
             // 
             // label2
             // 
@@ -201,8 +202,8 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }

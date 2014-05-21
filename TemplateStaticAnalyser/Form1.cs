@@ -40,7 +40,9 @@ namespace TemplateStaticAnalyser
                     ShowInvalidCredentialsMessage();
                     return;
                 }
+
                 var analysisData = StartAnalysis();
+
                 SaveCsv(analysisData);
                 AnalysisFinished();
             }
@@ -96,6 +98,7 @@ namespace TemplateStaticAnalyser
             ProgressBar.Visible = true;
 
             var connectionString = _dbHelper.ConnectionString(SqlCredentials(), DatabaseNameComboBox.Text);
+            ProgressBar.Value = 0;
             _analyser.OnTemplateParsed += UpdateProgress;
             var analysisedData = _analyser.ProcessDocumentTemplates(connectionString);
             _analyser.OnTemplateParsed -= UpdateProgress;
@@ -104,9 +107,11 @@ namespace TemplateStaticAnalyser
 
         private void UpdateProgress(object sender, TemplateParsedEventArgs args)
         {
-            ProgressBar.Minimum = 0;
-            ProgressBar.Maximum = args.TemplateCount;
-            ProgressBar.Value = args.TemplateIndex;
+            BeginInvoke((Action) (() =>
+            {
+                ProgressBar.Maximum = args.TemplateCount;
+                ProgressBar.Value++;
+            }));
         }
 
 

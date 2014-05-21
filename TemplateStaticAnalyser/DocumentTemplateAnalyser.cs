@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Microsoft.Office.Interop.Word;
 using TemplateStaticAnalyser.Models;
 
@@ -54,15 +57,39 @@ namespace TemplateStaticAnalyser
                     var noOfTemplates = GetNoOfTemplates(sqlConnection);
                     var reader = GetData(sqlConnection);
 
-                    OnTemplateParsed(this, new TemplateParsedEventArgs(0, noOfTemplates));
                     if (reader.HasRows)
                     {
-                        var i = 1;
+                        var threads = new List<Thread>();
                         while (reader.Read())
                         {
-                            ParseTemplate(reader, analysisData, wordApplication, ref i, noOfTemplates);
+                            var templateName = reader.GetString(4);
+                            var docContent = (byte[])reader["DocContent"];
+
+                            threads.Add(new Thread(() => ParseTemplate(analysisData, wordApplication, noOfTemplates, templateName, docContent)));
+                        }
+
+                        const int threadCount = 8;
+
+                        for (var j = 0; j < Math.Ceiling((double)threads.Count / threadCount); j++)
+                        {
+                            var threadsToKickOff = new List<Thread>();
+                            for (var k = 0; k < threadCount; k++)
+                            {
+                                var theIndexWeWant = (j * threadCount) + k;
+
+                                Debug.WriteLine("index is {0}", theIndexWeWant);
+                                var aThread = threads.ElementAtOrDefault(theIndexWeWant);
+                                if (aThread != null)
+                                {
+                                    threadsToKickOff.Add(aThread);
+                                }
+                            }
+
+                            threadsToKickOff.ForEach(t => t.Start());
+                            threadsToKickOff.ForEach(t => t.Join());
                         }
                     }
+
                     return analysisData;
                 }
             }
@@ -72,25 +99,21 @@ namespace TemplateStaticAnalyser
             }
         }
 
-        private void ParseTemplate(SqlDataReader reader, Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData, Application wordApplication, ref int i, int noOfTemplates)
+        private void ParseTemplate(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData, Application wordApplication, int noOfTemplates, string templateName, byte[] docContent)
         {
-            var templateName = reader.GetString(4);
-            var docContent = (byte[]) reader["DocContent"];
-
             analysisData.Add(
                 new TemplateModel {Name = templateName},
                 this.ParseDocumentTemplate(wordApplication, docContent));
 
             if (OnTemplateParsed != null)
             {
-                OnTemplateParsed(this, new TemplateParsedEventArgs(i++, noOfTemplates));
+                OnTemplateParsed(this, new TemplateParsedEventArgs(noOfTemplates));
             }
-            return;
         }
 
         private static SqlDataReader GetData(SqlConnection sqlConnection)
         {
-            var sqlCommand = new SqlCommand("SELECT * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL",
+            var sqlCommand = new SqlCommand("SELECT top 100 * FROM dbo.Docs WHERE [TemplateId] IS NOT NULL",
                 sqlConnection);
 
             var reader = sqlCommand.ExecuteReader();
