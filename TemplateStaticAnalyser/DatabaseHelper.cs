@@ -69,13 +69,6 @@ namespace TemplateStaticAnalyser
             return connection;
         }
 
-        private SqlConnection CreateOpenConnection(String connectionString, String databaseName)
-        {
-            var sqlConnection = CreateOpenConnection(connectionString);
-            sqlConnection.ChangeDatabase(databaseName);
-            return sqlConnection;
-        }
-
         private List<String> RemoveExcludedDatabases(DataTable databaseList)
         {
             return (from DataRow r in databaseList.Rows
@@ -96,7 +89,7 @@ namespace TemplateStaticAnalyser
             get { return new[] { "master", "tempdb", "model", "msdb" }; }
         }
 
-        private String ConnectionString(SqlAuthConnectionModel connectionModel)
+        public String ConnectionString(SqlAuthConnectionModel connectionModel)
         {
             return new SqlConnectionStringBuilder
             {

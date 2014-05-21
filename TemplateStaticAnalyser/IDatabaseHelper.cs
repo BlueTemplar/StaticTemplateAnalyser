@@ -9,5 +9,6 @@ namespace TemplateStaticAnalyser
         List<SqlServerInstance> GetSqlServers();
         List<string> GetServerDatabases(SqlAuthConnectionModel connectionModel);
         Boolean ValidateLogin(SqlAuthConnectionModel connectionModel);
+        String ConnectionString(SqlAuthConnectionModel connectionModel);
     }
 }

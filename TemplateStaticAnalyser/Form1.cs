@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
+using System.IO;
 using System.Windows.Forms;
 using TemplateStaticAnalyser.Models;
 
@@ -9,19 +9,21 @@ namespace TemplateStaticAnalyser
 {
     public partial class Form1 : Form
     {
-        private Thread _analyseThread;
-        private readonly IDatabaseHelper _dbInstances;
+        private readonly IDatabaseHelper _dbHelper;
+        private readonly IAnalyser _analyser;
+        private readonly IAnalysisDataParser _analysisDataParser;
 
         public Form1()
-            : this(new DatabaseHelper())
+            : this(new DatabaseHelper(), new Analyser(), new AnalysisDataParser())
         {
         }
 
-        public Form1(IDatabaseHelper databaseHelper)
+        public Form1(IDatabaseHelper databaseHelper, IAnalyser analyser, IAnalysisDataParser analysisDataParser)
         {
-            _dbInstances = databaseHelper;
+            _dbHelper = databaseHelper;
+            _analyser = analyser;
+            _analysisDataParser = analysisDataParser;
             InitializeComponent();
-            CancelButton.Visible = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -38,15 +40,31 @@ namespace TemplateStaticAnalyser
                     ShowInvalidCredentialsMessage();
                     return;
                 }
-                StartAnalysis();
+                var analysisData = StartAnalysis();
+                SaveCsv(analysisData);
+                AnalysisFinished();
             }
             catch (Exception ex)
             {
-                throw;  //tbd...
+                throw; //tbd...
             }
-            finally
+        }
+
+        private void SaveCsv(Dictionary<TemplateModel, List<FieldCodeSummaryModel>> analysisData)
+        {
+            var dlg = new SaveFileDialog
             {
-                AnalysisFinished();
+                AddExtension = true,
+                OverwritePrompt = true,
+                FileName = "static-analysis.csv",
+                DefaultExt = "csv",
+                Filter = "CSV Files | *.csv",
+                SupportMultiDottedExtensions = false,
+                Title = "Save static analysis?"
+            };
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(dlg.FileName, _analysisDataParser.ToCsv(analysisData));
             }
         }
 
@@ -61,32 +79,36 @@ namespace TemplateStaticAnalyser
 
         private bool InValidateCredentials()
         {
-            return !_dbInstances.ValidateLogin(SqlCredentials());
+            return !_dbHelper.ValidateLogin(SqlCredentials());
         }
 
         private void AnalysisFinished()
         {
             AnalyseButton.Enabled = true;
-            CancelButton.Visible = false;
+            ProgressBar.Visible = false;
+
+            
         }
 
-        private void StartAnalysis()
+        private Dictionary<TemplateModel, List<FieldCodeSummaryModel>> StartAnalysis()
         {
             AnalyseButton.Enabled = false;
-            CancelButton.Visible = true;
+            ProgressBar.Visible = true;
 
-            _analyseThread = new Thread(() => Thread.Sleep(5000));
-            _analyseThread.Start();
-            _analyseThread.Join();
+            var connectionString = _dbHelper.ConnectionString(SqlCredentials());
+            _analyser.OnTemplateParsed += UpdateProgress;
+            var analysisedData = _analyser.Analyse(connectionString);
+            _analyser.OnTemplateParsed -= UpdateProgress;
+            return analysisedData;
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void UpdateProgress(object sender, TemplateParsedEventArgs args)
         {
-            if (_analyseThread != null && _analyseThread.IsAlive)
-            {
-                _analyseThread.Abort();
-            }
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = args.TemplateCount;
+            ProgressBar.Value = args.TemplateIndex;
         }
+
 
         private void DatabaseServerComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -104,7 +126,7 @@ namespace TemplateStaticAnalyser
             DatabaseNameComboBox.Text = string.Empty;
             DatabaseNameComboBox.Items.Clear();
 
-            _dbInstances
+            _dbHelper
                 .GetServerDatabases(SqlCredentials())
                 .ForEach(AddDatabaseNameToComboBox);
         }
@@ -162,7 +184,7 @@ namespace TemplateStaticAnalyser
             //If no known SQL server instances in the list then search the network
             if (DatabaseServerComboBox.Items.Count <= 1)
             {
-                SafeExecute(() => _dbInstances.GetSqlServers().ForEach(i => DatabaseServerComboBox.Items.Add(i.ToString())));
+                SafeExecute(() => _dbHelper.GetSqlServers().ForEach(i => DatabaseServerComboBox.Items.Add(i.ToString())));
             }
         }
     }

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.AnalyseButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.DatabaseServerComboBox = new System.Windows.Forms.ComboBox();
@@ -39,6 +38,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.UserNameTextBox = new System.Windows.Forms.TextBox();
             this.PasswordTextBox = new System.Windows.Forms.TextBox();
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // AnalyseButton
@@ -50,16 +50,6 @@
             this.AnalyseButton.Text = "Analyse";
             this.AnalyseButton.UseVisualStyleBackColor = true;
             this.AnalyseButton.Click += new System.EventHandler(this.AnalyseButton_Click);
-            // 
-            // CancelButton
-            // 
-            this.CancelButton.Location = new System.Drawing.Point(340, 302);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 1;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // label1
             // 
@@ -149,11 +139,20 @@
             this.PasswordTextBox.TabIndex = 14;
             this.PasswordTextBox.Text = "1r15l4w09!";
             // 
+            // ProgressBar
+            // 
+            this.ProgressBar.Location = new System.Drawing.Point(12, 302);
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(403, 23);
+            this.ProgressBar.TabIndex = 15;
+            this.ProgressBar.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(505, 337);
+            this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.PasswordTextBox);
             this.Controls.Add(this.UserNameTextBox);
             this.Controls.Add(this.label3);
@@ -163,7 +162,6 @@
             this.Controls.Add(this.DatabaseServerComboBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.AnalyseButton);
             this.Name = "Form1";
             this.Text = "Template Static Analyser";
@@ -176,7 +174,6 @@
         #endregion
 
         private System.Windows.Forms.Button AnalyseButton;
-        private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox DatabaseServerComboBox;
@@ -186,6 +183,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox UserNameTextBox;
         private System.Windows.Forms.TextBox PasswordTextBox;
+        private System.Windows.Forms.ProgressBar ProgressBar;
     }
 }
 
